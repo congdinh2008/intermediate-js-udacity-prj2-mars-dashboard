@@ -60,10 +60,6 @@ app.get("/rover/:roverName", async (req, res) => {
 
   try {
     let rover = await fetch(url).then((res) => res.json());
-
-    if (rover.photos.length === 0) {
-      res.status(404).send("No photos found");
-    }
     roverData = rover?.photos[0]?.rover;
     photos = rover?.photos;
     res.send({ roverData, photos });

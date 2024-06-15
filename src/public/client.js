@@ -89,6 +89,12 @@ const HomePage = (apod) => {
         `;
 };
 
+/**
+ * Renders the RoverPage component.
+ *
+ * @param {object} state - The state object containing roverData, selectedRover, and photos.
+ * @returns {string} - The HTML string representing the RoverPage component.
+ */
 const RoverPage = (state) => {
   const { roverData, selectedRover } = state;
 
@@ -99,19 +105,13 @@ const RoverPage = (state) => {
 
   const { photos } = state;
 
+  if (!roverData) {
+    return ErroPage();
+  }
+
   if (roverData.size === 0) {
     return Loading();
   }
-
-  // if (photos.size === 0) {
-  //   return `<section>
-  //           ${RoverInfo(roverData)}
-  //           ${FilterBar(state)}
-  //           ${Loading()}
-  //           ${Pagination(state)}
-  //           </section>
-  //           `;
-  // }
 
   return `<section>
             ${RoverInfo(roverData)}
@@ -122,12 +122,24 @@ const RoverPage = (state) => {
     `;
 };
 
+const ErroPage = () => {
+  return `<section>
+            <div class="text-center my-3">
+              <h1 class="text-2xl">
+                API Error: Unable to fetch data from the server
+              </h1>
+            </div>
+          </section>
+    `;
+};
+
 const FilterBar = (state) => {
   return `
           <div class="filter-bar flex justify-between items-center border border-slate-400 rounded-md my-3 p-2">
               <div class="select-camera">
                   <label for="camera">Camera:</label>
                   <select id="camera" name="camera" class="border border-slate-400 p-2" onchange="updateCamera(event)">
+                      <option value="">Select Camera</option>
                       ${state.roverData?.cameras?.map((camera) => {
                         return `<option id="${camera.name}" value="${camera.name}">${camera.full_name}</option>`;
                       })}
@@ -142,6 +154,9 @@ const FilterBar = (state) => {
 };
 
 const RoverPhotos = (photos) => {
+  if (photos.size === 0) {
+    return `<div class="text-center my-3">No photos found</div>`;
+  }
   return `<div class="grid grid-cols-5 gap-3 my-3">
     ${photos
       .map((photo) => {
@@ -316,9 +331,7 @@ const updateCamera = (event) => {
     }),
   });
 
-  if (cameraCode !== "") {
-    getRoverData(store.selectedRover);
-  }
+  getRoverData(store.selectedRover);
 
   const { params } = store.router;
 
@@ -364,6 +377,12 @@ const updateEarthDate = (event) => {
   window.history.pushState({}, "", url);
 };
 
+/**
+ * Updates the page based on the specified event and page.
+ *
+ * @param {Event} event - The event that triggered the page update.
+ * @param {string|number} page - The page to navigate to. Can be "start", "end", "prev", "next", or a page number.
+ */
 const updatePage = (event, page) => {
   let pageNumber = store.router.params.pageNumber;
 
@@ -417,6 +436,10 @@ const updatePage = (event, page) => {
   window.history.pushState({}, "", link);
 };
 
+/**
+ * Handles the selection of a page and updates the store and router accordingly.
+ * @param {Event} event - The event object triggered by the page selection.
+ */
 const selectPage = (event) => {
   // get rover name
   const roverName = event.target.id;
@@ -475,13 +498,9 @@ const getRoverData = (roverName) => {
     }
   });
 
-  return fetch(url)
+  fetch(url)
     .then((res) => res.json())
     .then((data) => {
-      if (data.photos.length === 0) {
-        return false;
-      }
-
       updateStore(store, {
         roverData: data.roverData,
         photos: data.photos,
@@ -495,8 +514,6 @@ const getRoverData = (roverName) => {
           },
         },
       });
-
-      return true;
     })
     .catch((err) => {
       console.log("error:", err);
