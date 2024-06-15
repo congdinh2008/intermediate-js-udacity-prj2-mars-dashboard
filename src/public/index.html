@@ -5,7 +5,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/immutable/4.3.6/immutable.min.js"
+        integrity="sha512-8ETn2aAOFrUhfMFyI52EsumOAFGxI9RvPzlpmq4XJJuvMG/CeHziZjTLuGOBnd/9mfxPEAI/lFmYyD8GVTnU/w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <title>Document</title>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        clifford: '#da373d',
+                    }
+                }
+            }
+        }
+    </script>
 </head>
 
 <body>
@@ -15,6 +30,6 @@
         </div>
     </main>
 </body>
-<script src="/client.js"></script>
+<script src="./client.js"></script>
 
 </html>
